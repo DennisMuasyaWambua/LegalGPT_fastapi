@@ -1,0 +1,94 @@
+2025-06-09 09:02:42,842 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:02:46,560 - INFO - Initializing vector database at ./vector_db
+2025-06-09 09:02:46,753 - INFO - Starting vectorizers initialization
+2025-06-09 09:02:46,753 - INFO - Initializing vectorizer for kenyalaw.org
+2025-06-09 09:02:47,357 - INFO - Loaded robots.txt from https://kenyalaw.org/robots.txt
+2025-06-09 09:02:47,357 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:02:50,143 - INFO - Using provided collection for https://kenyalaw.org
+2025-06-09 09:02:50,143 - INFO - WebsiteVectorizer initialized for https://kenyalaw.org
+2025-06-09 09:02:50,143 - INFO - Download directory: /tmp/tmpfiit8ki7 (temporary: True)
+2025-06-09 09:02:50,143 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-06-09 09:02:50,143 - INFO - Successfully initialized vectorizer for kenyalaw.org
+2025-06-09 09:02:50,143 - INFO - Initializing vectorizer for new.kenyalaw.org
+2025-06-09 09:02:50,756 - INFO - Loaded robots.txt from https://new.kenyalaw.org/robots.txt
+2025-06-09 09:02:50,756 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:02:53,756 - INFO - Using provided collection for https://new.kenyalaw.org
+2025-06-09 09:02:53,757 - INFO - WebsiteVectorizer initialized for https://new.kenyalaw.org
+2025-06-09 09:02:53,757 - INFO - Download directory: /tmp/tmph95gnfj0 (temporary: True)
+2025-06-09 09:02:53,757 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-06-09 09:02:53,757 - INFO - Successfully initialized vectorizer for new.kenyalaw.org
+2025-06-09 09:02:53,757 - INFO - Completed vectorizers initialization
+2025-06-09 09:22:47,084 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:22:50,964 - INFO - Initializing vector database at ./vector_db
+2025-06-09 09:22:51,109 - INFO - Starting vectorizers initialization
+2025-06-09 09:22:51,109 - INFO - Initializing vectorizer for kenyalaw.org
+2025-06-09 09:22:51,778 - INFO - Loaded robots.txt from https://kenyalaw.org/robots.txt
+2025-06-09 09:22:51,778 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:22:55,063 - INFO - Using provided collection for https://kenyalaw.org
+2025-06-09 09:22:55,063 - INFO - WebsiteVectorizer initialized for https://kenyalaw.org
+2025-06-09 09:22:55,064 - INFO - Download directory: /tmp/tmp66e6s8r4 (temporary: True)
+2025-06-09 09:22:55,064 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-06-09 09:22:55,064 - INFO - Successfully initialized vectorizer for kenyalaw.org
+2025-06-09 09:22:55,064 - INFO - Initializing vectorizer for new.kenyalaw.org
+2025-06-09 09:22:56,084 - INFO - Loaded robots.txt from https://new.kenyalaw.org/robots.txt
+2025-06-09 09:22:56,084 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:22:58,986 - INFO - Using provided collection for https://new.kenyalaw.org
+2025-06-09 09:22:58,986 - INFO - WebsiteVectorizer initialized for https://new.kenyalaw.org
+2025-06-09 09:22:58,986 - INFO - Download directory: /tmp/tmpemq4im_w (temporary: True)
+2025-06-09 09:22:58,986 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-06-09 09:22:58,986 - INFO - Successfully initialized vectorizer for new.kenyalaw.org
+2025-06-09 09:22:58,986 - INFO - Completed vectorizers initialization
+2025-06-09 09:26:44,444 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:26:48,430 - INFO - Initializing vector database at ./vector_db
+2025-06-09 09:26:48,586 - INFO - Starting vectorizers initialization
+2025-06-09 09:26:48,586 - INFO - Initializing vectorizer for kenyalaw.org
+2025-06-09 09:26:49,185 - INFO - Loaded robots.txt from https://kenyalaw.org/robots.txt
+2025-06-09 09:26:49,186 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:26:52,828 - INFO - Using provided collection for https://kenyalaw.org
+2025-06-09 09:26:52,830 - INFO - WebsiteVectorizer initialized for https://kenyalaw.org
+2025-06-09 09:26:52,830 - INFO - Download directory: /tmp/tmp5q2ebr0o (temporary: True)
+2025-06-09 09:26:52,830 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-06-09 09:26:52,830 - INFO - Successfully initialized vectorizer for kenyalaw.org
+2025-06-09 09:26:52,830 - INFO - Initializing vectorizer for new.kenyalaw.org
+2025-06-09 09:26:53,339 - INFO - Loaded robots.txt from https://new.kenyalaw.org/robots.txt
+2025-06-09 09:26:53,339 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:26:57,075 - INFO - Using provided collection for https://new.kenyalaw.org
+2025-06-09 09:26:57,076 - INFO - WebsiteVectorizer initialized for https://new.kenyalaw.org
+2025-06-09 09:26:57,076 - INFO - Download directory: /tmp/tmpp46kwpid (temporary: True)
+2025-06-09 09:26:57,076 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-06-09 09:26:57,076 - INFO - Successfully initialized vectorizer for new.kenyalaw.org
+2025-06-09 09:26:57,076 - INFO - Completed vectorizers initialization
+2025-06-09 09:31:42,623 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:31:46,009 - INFO - Initializing vector database at ./vector_db
+2025-06-09 09:31:46,175 - INFO - Starting vectorizers initialization
+2025-06-09 09:31:46,175 - INFO - Initializing vectorizer for kenyalaw.org
+2025-06-09 09:31:46,780 - INFO - Loaded robots.txt from https://kenyalaw.org/robots.txt
+2025-06-09 09:31:46,780 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:31:49,796 - INFO - Using provided collection for https://kenyalaw.org
+2025-06-09 09:31:49,797 - INFO - WebsiteVectorizer initialized for https://kenyalaw.org
+2025-06-09 09:31:49,797 - INFO - Download directory: /tmp/tmpbp8yntw8 (temporary: True)
+2025-06-09 09:31:49,797 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-06-09 09:31:49,797 - INFO - Successfully initialized vectorizer for kenyalaw.org
+2025-06-09 09:31:49,797 - INFO - Initializing vectorizer for new.kenyalaw.org
+2025-06-09 09:31:50,404 - INFO - Loaded robots.txt from https://new.kenyalaw.org/robots.txt
+2025-06-09 09:31:50,404 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-06-09 09:31:53,383 - INFO - Using provided collection for https://new.kenyalaw.org
+2025-06-09 09:31:53,383 - INFO - WebsiteVectorizer initialized for https://new.kenyalaw.org
+2025-06-09 09:31:53,383 - INFO - Download directory: /tmp/tmplutm_sax (temporary: True)
+2025-06-09 09:31:53,383 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-06-09 09:31:53,383 - INFO - Successfully initialized vectorizer for new.kenyalaw.org
+2025-06-09 09:31:53,384 - INFO - Completed vectorizers initialization
+2025-06-09 09:39:19,320 - INFO - Querying with text: 'What are the requirements for starting a business ...' across sites: ['kenyalaw.org']
+2025-06-09 09:39:19,494 - INFO - Querying collection for kenyalaw.org
+2025-06-09 09:39:19,521 - INFO - Found 0 results from kenyalaw.org
+2025-06-09 09:39:19,521 - INFO - Returning 0 results from query
+2025-06-09 09:39:19,521 - INFO - Getting response for query: 'What are the requirements for starting a business ...'
+2025-06-09 09:39:19,521 - INFO - Querying with text: 'What are the requirements for starting a business ...' across sites: ['kenyalaw.org']
+2025-06-09 09:39:19,538 - INFO - Querying collection for kenyalaw.org
+2025-06-09 09:39:19,539 - INFO - Found 0 results from kenyalaw.org
+2025-06-09 09:39:19,539 - INFO - Returning 0 results from query
+2025-06-09 09:39:19,539 - INFO - Sending request to Ollama at: http://localhost:11434
+2025-06-09 09:39:19,583 - WARNING - Model llama3 not found in Ollama. Available models: ['llama3:latest', 'llama2:latest', 'mxbai-embed-large:latest', 'llama3.2:latest', 'codellama:latest']
+2025-06-09 09:39:19,583 - INFO - Falling back to available model: llama3:latest
+2025-06-09 09:39:19,583 - INFO - Sending request to Ollama with model: llama3:latest
+2025-06-09 09:39:19,646 - ERROR - Error from Ollama API: 500, {"error":"model requires more system memory (5.9 GiB) than is available (1.2 GiB)"}
