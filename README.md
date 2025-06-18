@@ -193,13 +193,65 @@ The API can be configured with the following environment variables:
 - `VECTOR_DB_PATH`: Path to store the vector database (default: "./vector_db")
 - `CONCURRENT_REQUESTS`: Number of concurrent requests for crawling (default: 4)
 - `REQUEST_DELAY`: Delay between requests in seconds (default: 1.0)
-- `OLLAMA_HOST`: Host for Ollama API (default: "http://localhost:11434")
+- `OLLAMA_HOST`: Host for Ollama API (default: "http://localhost:11434"). Set this to the correct address if your Ollama instance is running elsewhere.
 
 ## Running with Docker
 
+This project includes a complete Docker setup with Ollama running in the same container for easy deployment.
+
+### Using Docker Compose (Recommended)
+
+The easiest way to deploy is with Docker Compose:
+
 ```bash
+# Build and start the container
+docker-compose up -d
+
+# To view logs
+docker-compose logs -f
+```
+
+This will:
+1. Build the image with both the FastAPI application and Ollama
+2. Start both services managed by supervisord
+3. Download and pull the Llama3 model if needed
+4. Persist both the vector database and Ollama models with volumes
+
+### Manual Docker Commands
+
+If you prefer to use Docker directly:
+
+```bash
+# Build the image
 docker build -t legal-gpt-fastapi .
-docker run -p 8000:8000 -e VECTOR_DB_PATH=/app/vector_db legal-gpt-fastapi
+
+# Run the container with volumes for persistence
+docker run -d -p 8000:8000 -p 11434:11434 \
+  -v $(pwd)/vector_db:/app/vector_db \
+  -v ollama_models:/root/.ollama \
+  legal-gpt-fastapi
+```
+
+### Using an External Ollama Instance
+
+If you prefer to use Ollama running elsewhere, you can set the OLLAMA_HOST environment variable:
+
+```bash
+docker run -p 8000:8000 -e VECTOR_DB_PATH=/app/vector_db -e OLLAMA_HOST=http://your-ollama-host:11434 legal-gpt-fastapi
+```
+
+### First-Time Setup
+
+When you start the container for the first time:
+
+1. It will download and install Ollama
+2. It will download the Llama3 model (this may take several minutes)
+3. The API will start after Ollama is ready
+
+You can check the status with:
+
+```bash
+curl http://localhost:8000/status
 ```
 
 ## License

@@ -2,31 +2,48 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
-# Added git and cmake, which are essential for llama_cpp_python to build correctly.
+# Install system dependencies including curl for Ollama installation
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     git \
     cmake \
+    curl \
+    ca-certificates \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
+# Download and install Ollama
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
 # Copy requirements first for better caching
-COPY requirements-railway.txt .
+COPY requirements.txt .
 
 # Create and activate virtual environment
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install Python dependencies
-# Added --retries, --timeout, and --no-cache-dir for more robust downloads.
 RUN pip install --upgrade pip && \
-    pip --no-cache-dir install --retries 5 --timeout 600 -r requirements-railway.txt
+    pip --no-cache-dir install --retries 5 --timeout 600 -r requirements.txt
 
 # Copy application code
 COPY . .
 
-# Expose port for the application
-EXPOSE 8000
+# Set up Supervisord to manage both services
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Command to run the application
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Make entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
+
+# Create necessary directories
+RUN mkdir -p /app/vector_db /app/static
+
+# Set environment variables
+ENV OLLAMA_HOST=http://localhost:11434
+ENV VECTOR_DB_PATH=/app/vector_db
+
+# Expose ports for both Ollama and the API
+EXPOSE 8000 11434
+
+# Start services using supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

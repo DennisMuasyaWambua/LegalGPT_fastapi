@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.docker
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.venv/
+
+# Vector database (will be mounted as volume)
+vector_db/
+
+# Logs
+*.log
+logs/
+
+# Tests
+tests/
+
+# Documentation
+docs/
+README.md
+
+# Editor configs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

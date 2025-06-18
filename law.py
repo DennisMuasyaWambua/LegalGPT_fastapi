@@ -1578,7 +1578,7 @@ Answer:
                     status_response = requests.get(f"{ollama_host}/api/tags", timeout=2)
                     if status_response.status_code != 200:
                         logger.error(f"Ollama not available. Status check failed with code: {status_response.status_code}")
-                        return f"Ollama service is not available. Here's the relevant context:\n\n{context_text[:500]}..."
+                        return f"Ollama service is not available. Using context-only response:\n\n{context_text[:500]}...\n\nPlease check that Ollama is running locally or set OLLAMA_HOST environment variable."
                     
                     # Check if the requested model is available
                     models = [model.get("name") for model in status_response.json().get("models", [])]
@@ -1589,10 +1589,11 @@ Answer:
                             model_name = models[0]
                             logger.info(f"Falling back to available model: {model_name}")
                         else:
-                            return f"Requested model '{model_name}' not available in Ollama. Here's the relevant context:\n\n{context_text[:500]}..."
+                            return f"Requested model '{model_name}' not available in Ollama. Using context-only response:\n\n{context_text[:500]}..."
                 except Exception as status_err:
                     logger.error(f"Error checking Ollama status: {str(status_err)}")
-                    # Continue anyway and try the main request
+                    # Provide a more helpful error message and fallback response
+                    return f"Ollama service not available (Error: {str(status_err)}). Using context-only response:\n\n{context_text[:1000]}..."
                 
                 # Prepare request payload
                 payload = {
@@ -1622,17 +1623,17 @@ Answer:
                         return result["response"]
                     except json.JSONDecodeError as json_err:
                         logger.error(f"Error decoding Ollama response: {str(json_err)}")
-                        return f"Error processing Ollama response. Here's the relevant context:\n\n{context_text[:500]}..."
+                        return f"Error processing Ollama response. Using context-only response:\n\n{context_text[:500]}..."
                 else:
                     logger.error(f"Error from Ollama API: {response.status_code}, {response.text}")
-                    return f"Error accessing Ollama (HTTP {response.status_code}). Here's the relevant context:\n\n{context_text[:500]}..."
+                    return f"Error accessing Ollama (HTTP {response.status_code}). Using context-only response:\n\n{context_text[:500]}...\n\nPlease ensure Ollama is running and the requested model is available."
                     
             except requests.RequestException as req_err:
                 logger.error(f"Request error connecting to Ollama: {str(req_err)}")
-                return f"Could not connect to Ollama service. Here's the relevant context:\n\n{context_text[:500]}..."
+                return f"Could not connect to Ollama service. Using context-only response:\n\n{context_text[:500]}...\n\nMake sure Ollama is running or set the OLLAMA_HOST environment variable."
             except Exception as e:
                 logger.error(f"Unexpected error with Ollama: {str(e)}")
-                return f"Error using Ollama LLM. Here's the relevant context:\n\n{context_text[:500]}..."
+                return f"Error using Ollama LLM: {str(e)}. Using context-only response:\n\n{context_text[:500]}..."
                 
         except Exception as e:
             logger.error(f"Error in get_response_with_context: {str(e)}")

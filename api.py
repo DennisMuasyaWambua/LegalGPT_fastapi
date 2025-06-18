@@ -86,6 +86,10 @@ async def startup_event():
     vector_db_path = os.environ.get("VECTOR_DB_PATH", "./vector_db")
     concurrent_requests = int(os.environ.get("CONCURRENT_REQUESTS", "4"))
     request_delay = float(os.environ.get("REQUEST_DELAY", "1.0"))
+    ollama_host = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434")
+    
+    # Log Ollama configuration
+    logger.info(f"Using Ollama host: {ollama_host}")
     
     # Create vector_db directory if it doesn't exist
     os.makedirs(vector_db_path, exist_ok=True)
@@ -106,6 +110,19 @@ async def startup_event():
     )
     
     logger.info(f"SimGrag initialization complete. Using vector_db_path={vector_db_path}")
+    
+    # Check Ollama status
+    try:
+        import requests
+        logger.info(f"Checking Ollama availability at {ollama_host}")
+        response = requests.get(f"{ollama_host}/api/tags", timeout=2)
+        if response.status_code == 200:
+            models = [model.get("name") for model in response.json().get("models", [])]
+            logger.info(f"Ollama connected successfully. Available models: {models}")
+        else:
+            logger.warning(f"Ollama responded with status code {response.status_code}. LLM functionality may be limited.")
+    except Exception as e:
+        logger.warning(f"Could not connect to Ollama at {ollama_host}: {str(e)}. The API will still work but LLM responses will be limited to returning context only.")
 
 @app.on_event("shutdown")
 async def shutdown_event():

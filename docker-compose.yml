@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  legal-gpt:
+    build: .
+    ports:
+      - "8000:8000"  # API
+      - "11434:11434" # Ollama (optional - expose only if you want to access Ollama directly)
+    volumes:
+      - ./vector_db:/app/vector_db  # Persist vector database
+      - ollama_models:/root/.ollama  # Persist Ollama models
+    environment:
+      - VECTOR_DB_PATH=/app/vector_db
+      - OLLAMA_HOST=http://localhost:11434
+      - CONCURRENT_REQUESTS=4
+      - REQUEST_DELAY=1.0
+    restart: unless-stopped
+
+volumes:
+  ollama_models:  # Named volume for Ollama models
