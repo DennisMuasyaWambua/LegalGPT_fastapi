@@ -3,7 +3,8 @@ version: '3'
 services:
   legal-gpt:
     build: .
-    ports:
+        shm_size: 1gb
+ports:
       - "8000:8000"  # API
       - "11434:11434" # Ollama (optional - expose only if you want to access Ollama directly)
     volumes:
@@ -14,6 +15,18 @@ services:
       - OLLAMA_HOST=http://localhost:11434
       - CONCURRENT_REQUESTS=4
       - REQUEST_DELAY=1.0
+      - OLLAMA_TIMEOUT=300
+      - HTTP_TIMEOUT=30
+      # Resource allocation
+      - OLLAMA_NUM_THREADS=2
+      - OLLAMA_NUM_GPU=0  # Set to number of GPUs you want to use
+      - DEFAULT_MODEL=tinyl
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2Glama
     restart: unless-stopped
 
 volumes:

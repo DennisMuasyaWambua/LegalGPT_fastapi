@@ -1488,7 +1488,12 @@ class SimGrag:
             return []
     
     async def get_response_with_context(self, query: str, top_k: int = None, site_filter: str = None,
-                                       model_name: str = "llama3") -> str:
+
+        # Get model name from environment or use parameter
+        if model_name is None:
+            model_name = os.environ.get("DEFAULT_MODEL", "tinyllama")
+            logger.info(f"Using model from environment: {model_name}")
+                                               model_name: str = None
         """
         Get response with context from both Kenya Law sites
         
@@ -1542,8 +1547,8 @@ class SimGrag:
                     
                 context_text += new_context
             
-            # Create prompt for Kenya Law
-            prompt = f"""
+            # Create prompt for Kenya Law - optimized for LLama3 model
+            prompt = f"""<|im_start|>system
 You are a Kenya Law Assistant providing accurate information based solely on the Kenya Law website content provided. 
 Your role is to assist with queries related to Kenyan laws, statutes, case law, and legal frameworks.
 
@@ -1558,10 +1563,14 @@ Important guidelines:
 4. Use formal, professional language appropriate for legal discussions.
 5. Avoid speculating about legal interpretations beyond what's explicitly stated in the context.
 6. When uncertain, acknowledge the limitations of the available information.
+7. Keep your response focused and concise.
+<|im_end|>
 
-User Question: {query}
+<|im_start|>user
+{query}
+<|im_end|>
 
-Answer:
+<|im_start|>assistant
 """
             # Try to use Ollama if available
             try:
@@ -1573,14 +1582,40 @@ Answer:
                 ollama_host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
                 logger.info(f"Sending request to Ollama at: {ollama_host}")
                 
-                # Check if Ollama is available with a quick status check
+                # Check if Ollama is available with multiple retries
+                max_retries = 3
+                retry_delay = 2
+                retry_count = 0
+                status_response = None
+                
+                while retry_count < max_retries:
+                    try:
+                        logger.info(f"Checking Ollama status (attempt {retry_count+1}/{max_retries})...")
+                        status_response = requests.get(f"{ollama_host}/api/tags", timeout=5)
+                        if status_response.status_code == 200:
+                            logger.info("Ollama status check successful")
+                            break
+                        else:
+                            logger.warning(f"Ollama status check failed with code: {status_response.status_code}")
+                            retry_count += 1
+                            if retry_count < max_retries:
+                                logger.info(f"Retrying in {retry_delay} seconds...")
+                                await asyncio.sleep(retry_delay)
+                                retry_delay *= 2  # Exponential backoff
+                    except Exception as e:
+                        logger.warning(f"Ollama status check error: {str(e)}")
+                        retry_count += 1
+                        if retry_count < max_retries:
+                            logger.info(f"Retrying in {retry_delay} seconds...")
+                            await asyncio.sleep(retry_delay)
+                            retry_delay *= 2  # Exponential backoff
+                
+                if retry_count >= max_retries or not status_response or status_response.status_code != 200:
+                    logger.error("Ollama not available after multiple retries")
+                    return f"Ollama service is not available. Using context-only response:\n\n{context_text[:500]}...\n\nPlease check that Ollama is running locally or set OLLAMA_HOST environment variable."
+                
+                # Check if the requested model is available
                 try:
-                    status_response = requests.get(f"{ollama_host}/api/tags", timeout=2)
-                    if status_response.status_code != 200:
-                        logger.error(f"Ollama not available. Status check failed with code: {status_response.status_code}")
-                        return f"Ollama service is not available. Using context-only response:\n\n{context_text[:500]}...\n\nPlease check that Ollama is running locally or set OLLAMA_HOST environment variable."
-                    
-                    # Check if the requested model is available
                     models = [model.get("name") for model in status_response.json().get("models", [])]
                     if model_name not in models:
                         logger.warning(f"Model {model_name} not found in Ollama. Available models: {models}")
@@ -1604,19 +1639,45 @@ Answer:
                         "temperature": 0.1,  # Lower temperature for more factual responses
                         "top_p": 0.95,
                         "top_k": 40
-                    }
+                    ,
+                        "num_predict": 1024}
                 }
                 
                 logger.info(f"Sending request to Ollama with model: {model_name}")
                 
-                # Make request to Ollama API with increased timeout
-                response = requests.post(
+                # Get timeout from environment variable or use default
+                ollama_timeout = int(os.environ.get("OLLAMA_TIMEOUT", 300))
+                logger.info(f"Using Ollama timeout of {ollama_timeout} seconds")
+                
+                # Configure session with timeouts and retry strategy
+                session = requests.Session()
+                adapter = requests.adapters.HTTPAdapter(
+                    max_retries=requests.adapters.Retry(
+                        total=3,
+                        backoff_factor=1,
+                        status_forcelist=[408, 429, 500, 502, 503, 504],
+                        allowed_methods=["POST"]
+                    )
+                )
+                session.mount('http://', adapter)
+                session.mount('https://', adapter)
+                
+                # Make request to Ollama API with dynamically set timeout and retry strategy
+                response = session.post(
                     f"{ollama_host}/api/generate",
                     json=payload,
-                    timeout=60  # Increase timeout to 60 seconds
+                    timeout=(10, ollama_timeout)  # (connect_timeout, read_timeout)
                 )
                 
-                if response.status_code == 200:
+                
+                if response.status_code != 200:
+                    # Check for memory error
+                    if response.status_code == 500 and "memory" in response.text.lower():
+                        logger.error(f"Memory error with model {model_name}. Returning context-only response.")
+                        return f"I found relevant information about your query, but don't have enough memory to generate a full response. Here's the relevant context:\n\n{context_text[:1500]}..."
+                    logger.error(f"Error from Ollama API: {response.status_code}, {response.text}")
+                    return f"Error accessing Ollama (HTTP {response.status_code}). Using context-only response:\n\n{context_text[:1500]}..."
+            if response.status_code == 200:
                     try:
                         result = response.json()
                         logger.info("Successfully received response from Ollama")
@@ -1759,9 +1820,9 @@ class LLMContextProvider:
                 
             context_text += new_context
         
-        # Create prompt specifically for Kenya Law
+        # Create prompt specifically for Kenya Law - optimized for Llama3
         if 'kenyalaw.org' in self.vectorizer.base_url:
-            prompt = f"""
+            prompt = f"""<|im_start|>system
 You are a Kenya Law Assistant providing accurate information based solely on the Kenya Law website content provided. 
 Your role is to assist with queries related to Kenyan laws, statutes, case law, and legal frameworks.
 
@@ -1776,18 +1837,30 @@ Important guidelines:
 4. Use formal, professional language appropriate for legal discussions.
 5. Avoid speculating about legal interpretations beyond what's explicitly stated in the context.
 6. When uncertain, acknowledge the limitations of the available information.
+7. Keep your response focused and concise.
+<|im_end|>
 
-User Question: {query}
+<|im_start|>user
+{query}
+<|im_end|>
 
-Answer:
+<|im_start|>assistant
 """
         else:
-            # Default prompt for other websites
-            prompt = f"""
+            # Default prompt for other websites - optimized for Llama3
+            prompt = f"""<|im_start|>system
+You are an AI assistant helping with queries based on the provided content.
+Use only the information in the context below to answer the question.
+
 Context information:
 {context_text}
+<|im_end|>
 
-Given the context information and not prior knowledge, answer the question: {query}
+<|im_start|>user
+{query}
+<|im_end|>
+
+<|im_start|>assistant
 """
         # If model is loaded, generate a response
         if self.model:

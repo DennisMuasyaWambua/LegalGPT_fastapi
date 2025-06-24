@@ -46,11 +46,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+    # Get default model from environment or fallback to a conservative option
+import os
+default_model = os.environ.get("DEFAULT_MODEL", "tinyllama")
 # Request models
 class ChatRequest(BaseModel):
     query: str = Field(..., description="User query to the Kenya Law Assistant")
     site_filter: Optional[str] = Field(None, description="Optional site filter: 'kenyalaw.org' or 'new.kenyalaw.org'")
-    model_name: str = Field("llama3", description="Model name to use with Ollama")
+    model_name: str = Field("llama3.2", description="Model name to use with Ollama")
 
 class CrawlRequest(BaseModel):
     max_pages: int = Field(100, description="Maximum number of pages to crawl")
@@ -111,18 +115,40 @@ async def startup_event():
     
     logger.info(f"SimGrag initialization complete. Using vector_db_path={vector_db_path}")
     
-    # Check Ollama status
+    # Check Ollama status with retry logic
     try:
         import requests
-        logger.info(f"Checking Ollama availability at {ollama_host}")
-        response = requests.get(f"{ollama_host}/api/tags", timeout=2)
-        if response.status_code == 200:
-            models = [model.get("name") for model in response.json().get("models", [])]
-            logger.info(f"Ollama connected successfully. Available models: {models}")
-        else:
-            logger.warning(f"Ollama responded with status code {response.status_code}. LLM functionality may be limited.")
+        import time
+        http_timeout = int(os.environ.get("HTTP_TIMEOUT", 5))
+        max_retries = 3
+        retry_delay = 2
+        retry_count = 0
+        
+        logger.info(f"Checking Ollama availability at {ollama_host} with timeout {http_timeout}s")
+        
+        while retry_count < max_retries:
+            try:
+                logger.info(f"Attempt {retry_count+1}/{max_retries} to check Ollama...")
+                response = requests.get(f"{ollama_host}/api/tags", timeout=http_timeout)
+                if response.status_code == 200:
+                    models = [model.get("name") for model in response.json().get("models", [])]
+                    logger.info(f"Ollama connected successfully. Available models: {models}")
+                    break
+                else:
+                    logger.warning(f"Ollama responded with status code {response.status_code}. Retrying...")
+                    retry_count += 1
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
+            except Exception as e:
+                logger.warning(f"Ollama connection error: {str(e)}. Retrying...")
+                retry_count += 1
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Exponential backoff
+        
+        if retry_count >= max_retries:
+            logger.warning(f"Could not connect to Ollama after {max_retries} attempts. The API will still work but LLM responses will be limited to returning context only.")
     except Exception as e:
-        logger.warning(f"Could not connect to Ollama at {ollama_host}: {str(e)}. The API will still work but LLM responses will be limited to returning context only.")
+        logger.warning(f"Error during Ollama connection check: {str(e)}. The API will still work but LLM responses will be limited to returning context only.")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -300,7 +326,7 @@ async def crawl(request: CrawlRequest, background_tasks: BackgroundTasks):
 # Function to run the API server
 def run_api(host: str = "0.0.0.0", port: int = 8000, reload: bool = False):
     """Run the FastAPI server"""
-    uvicorn.run("api:app", host=host, port=port, reload=reload)
+    uvicorn.run("api:app", host=host, port=port, reload=reload, timeout_keep_alive=75, workers=1)
 
 if __name__ == "__main__":
     import argparse
