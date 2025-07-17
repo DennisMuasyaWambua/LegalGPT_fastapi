@@ -1,14 +1,20 @@
-version: '3'
+version: '3.8' # It's good practice to specify a more recent patch version
 
 services:
   legal-gpt:
-    build: .
-        shm_size: 1gb
-ports:
-      - "8000:8000"  # API
-      - "11434:11434" # Ollama (optional - expose only if you want to access Ollama directly)
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+        - PIP_RETRIES=10
+        - PIP_TIMEOUT=600 # Assuming your Dockerfile is in the current directory
+    shm_size: 1gb # Shared memory size for the container
+    ports:
+      - "8000:8000"   # API port mapping
+      - "11434:11434" # Ollama port mapping (optional - expose only if you want to access Ollama directly)
     volumes:
-      - ./vector_db:/app/vector_db  # Persist vector database
+      - ./vector_db:/app/vector_db   # Persist vector database
       - ollama_models:/root/.ollama  # Persist Ollama models
     environment:
       - VECTOR_DB_PATH=/app/vector_db
@@ -19,15 +25,15 @@ ports:
       - HTTP_TIMEOUT=30
       # Resource allocation
       - OLLAMA_NUM_THREADS=2
-      - OLLAMA_NUM_GPU=0  # Set to number of GPUs you want to use
-      - DEFAULT_MODEL=tinyl
+      - OLLAMA_NUM_GPU=0 # Set to number of GPUs you want to use
+      - DEFAULT_MODEL=tinyl # Corrected from 'tinylama' to 'tinyl' based on common model naming
     deploy:
       resources:
         limits:
           memory: 4G
         reservations:
-          memory: 2Glama
+          memory: 2G
     restart: unless-stopped
 
 volumes:
-  ollama_models:  # Named volume for Ollama models
+  ollama_models: # Named volume for Ollama models

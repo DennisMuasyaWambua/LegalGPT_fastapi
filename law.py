@@ -1487,13 +1487,7 @@ class SimGrag:
             # Return empty results on error to prevent API failure
             return []
     
-    async def get_response_with_context(self, query: str, top_k: int = None, site_filter: str = None,
-
-        # Get model name from environment or use parameter
-        if model_name is None:
-            model_name = os.environ.get("DEFAULT_MODEL", "tinyllama")
-            logger.info(f"Using model from environment: {model_name}")
-                                               model_name: str = None
+    async def get_response_with_context(self, query: str, top_k: int = None, site_filter: str = None, model_name: str = None):
         """
         Get response with context from both Kenya Law sites
         
@@ -1677,7 +1671,7 @@ Important guidelines:
                         return f"I found relevant information about your query, but don't have enough memory to generate a full response. Here's the relevant context:\n\n{context_text[:1500]}..."
                     logger.error(f"Error from Ollama API: {response.status_code}, {response.text}")
                     return f"Error accessing Ollama (HTTP {response.status_code}). Using context-only response:\n\n{context_text[:1500]}..."
-            if response.status_code == 200:
+                if response.status_code == 200:
                     try:
                         result = response.json()
                         logger.info("Successfully received response from Ollama")

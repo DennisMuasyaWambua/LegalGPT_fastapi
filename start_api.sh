@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/dennis/Desktop/projects/LegalGPT_fastapi
+cd C:/Users/timot/Desktop/Muasya/LegalGPT_fastapi
 
 # Install required dependencies
 echo "Installing required dependencies..."
