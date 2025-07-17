@@ -92,3 +92,60 @@
 2025-06-09 09:39:19,583 - INFO - Falling back to available model: llama3:latest
 2025-06-09 09:39:19,583 - INFO - Sending request to Ollama with model: llama3:latest
 2025-06-09 09:39:19,646 - ERROR - Error from Ollama API: 500, {"error":"model requires more system memory (5.9 GiB) than is available (1.2 GiB)"}
+2025-07-17 16:27:05,412 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-07-17 16:27:11,334 - INFO - Initializing vector database at ./vector_db
+2025-07-17 16:27:11,503 - INFO - Starting vectorizers initialization
+2025-07-17 16:27:11,503 - INFO - Initializing vectorizer for kenyalaw.org
+2025-07-17 16:27:12,251 - INFO - Loaded robots.txt from https://kenyalaw.org/robots.txt
+2025-07-17 16:27:12,251 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-07-17 16:27:16,287 - INFO - Using provided collection for https://kenyalaw.org
+2025-07-17 16:27:16,288 - INFO - WebsiteVectorizer initialized for https://kenyalaw.org
+2025-07-17 16:27:16,288 - INFO - Download directory: /tmp/tmpg3pxha5x (temporary: True)
+2025-07-17 16:27:16,288 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-07-17 16:27:16,288 - INFO - Successfully initialized vectorizer for kenyalaw.org
+2025-07-17 16:27:16,288 - INFO - Initializing vectorizer for new.kenyalaw.org
+2025-07-17 16:27:16,959 - INFO - Loaded robots.txt from https://new.kenyalaw.org/robots.txt
+2025-07-17 16:27:16,960 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-07-17 16:27:21,740 - INFO - Using provided collection for https://new.kenyalaw.org
+2025-07-17 16:27:21,740 - INFO - WebsiteVectorizer initialized for https://new.kenyalaw.org
+2025-07-17 16:27:21,740 - INFO - Download directory: /tmp/tmpja_rcr86 (temporary: True)
+2025-07-17 16:27:21,740 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-07-17 16:27:21,740 - INFO - Successfully initialized vectorizer for new.kenyalaw.org
+2025-07-17 16:27:21,740 - INFO - Completed vectorizers initialization
+2025-07-17 16:32:50,037 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-07-17 16:32:53,510 - INFO - Initializing vector database at ./vector_db
+2025-07-17 16:32:53,641 - INFO - Starting vectorizers initialization
+2025-07-17 16:32:53,642 - INFO - Initializing vectorizer for kenyalaw.org
+2025-07-17 16:32:54,233 - INFO - Loaded robots.txt from https://kenyalaw.org/robots.txt
+2025-07-17 16:32:54,233 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-07-17 16:32:58,319 - INFO - Using provided collection for https://kenyalaw.org
+2025-07-17 16:32:58,320 - INFO - WebsiteVectorizer initialized for https://kenyalaw.org
+2025-07-17 16:32:58,320 - INFO - Download directory: /tmp/tmpook6ss7d (temporary: True)
+2025-07-17 16:32:58,320 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-07-17 16:32:58,320 - INFO - Successfully initialized vectorizer for kenyalaw.org
+2025-07-17 16:32:58,320 - INFO - Initializing vectorizer for new.kenyalaw.org
+2025-07-17 16:32:59,097 - INFO - Loaded robots.txt from https://new.kenyalaw.org/robots.txt
+2025-07-17 16:32:59,097 - INFO - Loading embedding model: all-MiniLM-L6-v2
+2025-07-17 16:33:04,086 - INFO - Using provided collection for https://new.kenyalaw.org
+2025-07-17 16:33:04,087 - INFO - WebsiteVectorizer initialized for https://new.kenyalaw.org
+2025-07-17 16:33:04,087 - INFO - Download directory: /tmp/tmpskln7rfg (temporary: True)
+2025-07-17 16:33:04,087 - INFO - Max concurrent requests: 4, Request delay: 1.0s
+2025-07-17 16:33:04,087 - INFO - Successfully initialized vectorizer for new.kenyalaw.org
+2025-07-17 16:33:04,087 - INFO - Completed vectorizers initialization
+2025-07-17 16:36:34,546 - INFO - Querying with text: 'What is the tax code in kenya...' across sites: ['kenyalaw.org']
+2025-07-17 16:36:34,643 - INFO - Querying collection for kenyalaw.org
+2025-07-17 16:36:34,645 - INFO - Found 0 results from kenyalaw.org
+2025-07-17 16:36:34,645 - INFO - Returning 0 results from query
+2025-07-17 16:36:34,645 - INFO - Getting response for query: 'What is the tax code in kenya...'
+2025-07-17 16:36:34,645 - INFO - Querying with text: 'What is the tax code in kenya...' across sites: ['kenyalaw.org']
+2025-07-17 16:36:34,655 - INFO - Querying collection for kenyalaw.org
+2025-07-17 16:36:34,656 - INFO - Found 0 results from kenyalaw.org
+2025-07-17 16:36:34,656 - INFO - Returning 0 results from query
+2025-07-17 16:36:34,656 - INFO - Sending request to Ollama at: http://localhost:11434
+2025-07-17 16:36:34,656 - INFO - Checking Ollama status (attempt 1/3)...
+2025-07-17 16:36:34,661 - INFO - Ollama status check successful
+2025-07-17 16:36:34,661 - WARNING - Model llama3 not found in Ollama. Available models: ['llama3:latest', 'llama2:latest', 'mxbai-embed-large:latest', 'llama3.2:latest', 'codellama:latest']
+2025-07-17 16:36:34,661 - INFO - Falling back to available model: llama3:latest
+2025-07-17 16:36:34,661 - INFO - Sending request to Ollama with model: llama3:latest
+2025-07-17 16:36:34,661 - INFO - Using Ollama timeout of 300 seconds
+2025-07-17 16:37:49,889 - INFO - Successfully received response from Ollama
