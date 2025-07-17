@@ -115,12 +115,15 @@ async def startup_event():
     
     logger.info(f"SimGrag initialization complete. Using vector_db_path={vector_db_path}")
     
-    # Check Ollama status with retry logic
+    # Check if we're in Railway environment - use minimal Ollama config
+    is_railway = os.environ.get('RAILWAY_ENVIRONMENT') is not None
+    
+    # Check Ollama status with retry logic (for both Railway and local)
     try:
         import requests
         import time
         http_timeout = int(os.environ.get("HTTP_TIMEOUT", 5))
-        max_retries = 3
+        max_retries = 3 if not is_railway else 1  # Fewer retries for Railway
         retry_delay = 2
         retry_count = 0
         
@@ -137,13 +140,15 @@ async def startup_event():
                 else:
                     logger.warning(f"Ollama responded with status code {response.status_code}. Retrying...")
                     retry_count += 1
-                    time.sleep(retry_delay)
-                    retry_delay *= 2  # Exponential backoff
+                    if retry_count < max_retries:
+                        time.sleep(retry_delay)
+                        retry_delay *= 2  # Exponential backoff
             except Exception as e:
                 logger.warning(f"Ollama connection error: {str(e)}. Retrying...")
                 retry_count += 1
-                time.sleep(retry_delay)
-                retry_delay *= 2  # Exponential backoff
+                if retry_count < max_retries:
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
         
         if retry_count >= max_retries:
             logger.warning(f"Could not connect to Ollama after {max_retries} attempts. The API will still work but LLM responses will be limited to returning context only.")

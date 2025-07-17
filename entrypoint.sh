@@ -1,36 +1,33 @@
 #!/bin/bash
 set -e
 
-# Set Ollama resource parameters if provided
-if [ ! -z "$OLLAMA_NUM_THREADS" ]; then
-    export OLLAMA_NUM_THREADS=$OLLAMA_NUM_THREADS
-    echo "Setting OLLAMA_NUM_THREADS=$OLLAMA_NUM_THREADS"
-fi
+# Set Ollama resource parameters optimized for Railway
+export OLLAMA_NUM_THREADS=1
+export OLLAMA_KEEP_ALIVE=5m
+export OLLAMA_MAX_LOADED_MODELS=1
+export OLLAMA_NUM_GPU=0
+export OLLAMA_HOST=0.0.0.0
 
-# Set keep alive to prevent constant model loading/unloading
-export OLLAMA_KEEP_ALIVE=120m
-echo "Setting OLLAMA_KEEP_ALIVE=120m"
+echo "Setting OLLAMA_NUM_THREADS=1"
+echo "Setting OLLAMA_KEEP_ALIVE=5m"
+echo "Setting OLLAMA_MAX_LOADED_MODELS=1"
+echo "Setting OLLAMA_NUM_GPU=0"
 
-if [ ! -z "$OLLAMA_NUM_GPU" ]; then
-    export OLLAMA_NUM_GPU=$OLLAMA_NUM_GPU
-    echo "Setting OLLAMA_NUM_GPU=$OLLAMA_NUM_GPU"
-fi
-
-# Wait for Ollama to start with improved health check
+# Wait for Ollama to start with Railway-optimized health check
 echo "Waiting for Ollama to start..."
-MAX_RETRIES=300  # 5 minutes timeout
+MAX_RETRIES=120  # 2 minutes timeout for Railway
 RETRY_COUNT=0
 RETRY_DELAY=1
 
-while ! curl -s --connect-timeout 5 http://localhost:11434/api/tags > /dev/null; do
+while ! curl -s --connect-timeout 3 http://localhost:11434/api/tags > /dev/null; do
     RETRY_COUNT=$((RETRY_COUNT+1))
     if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
         echo "Ollama failed to start after $MAX_RETRIES retries, continuing anyway..."
         break
     fi
     sleep $RETRY_DELAY
-    # Print status every 30 seconds
-    if [ $((RETRY_COUNT % 30)) -eq 0 ]; then
+    # Print status every 20 seconds
+    if [ $((RETRY_COUNT % 20)) -eq 0 ]; then
         echo "Still waiting for Ollama after $RETRY_COUNT seconds..."
     fi
 done
@@ -38,50 +35,37 @@ done
 if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
     echo "Ollama is running!"
     # Verify Ollama health
-    OLLAMA_STATUS=$(curl -s --connect-timeout 5 http://localhost:11434/api/tags || echo '{"error":"Failed to connect"}')
+    OLLAMA_STATUS=$(curl -s --connect-timeout 3 http://localhost:11434/api/tags || echo '{"error":"Failed to connect"}')
     echo "Ollama status: $OLLAMA_STATUS"
+    
+    # Pull the tinyllama model (smaller and faster for Railway)
+    echo "Checking for tinyllama model..."
+    if ! curl -s --connect-timeout 3 http://localhost:11434/api/tags | grep -q '"name":"tinyllama"'; then
+        echo "Pulling tinyllama model (optimized for Railway)..."
+        ollama pull tinyllama
+        echo "Model tinyllama ready!"
+    else
+        echo "Model tinyllama already exists!"
+    fi
 fi
 
-# Pull the Llama3 model if it doesn't exist
-echo "Checking for llama3 model..."
-if ! curl -s --connect-timeout 5 http://localhost:11434/api/tags | grep -q '"name":"llama3"'; then
-    echo "Pulling llama3 model (this may take a while)..."
-    ollama pull llama3
-    echo "Model llama3 ready!"
-else
-    echo "Model llama3 already exists!"
-fi
-
-# Configure Ollama model parameters
-# Get model name from environment or use default
+# Configure Ollama model parameters for Railway
 MODEL_NAME=${DEFAULT_MODEL:-tinyllama}
 echo "Using model: $MODEL_NAME"
 
-# Configure optimized model parameters
-echo "Configuring $MODEL_NAME model parameters..."
-# Set context size and threads
-ollama create ${MODEL_NAME}-optimiz
-# Monitor memory usage
-monitor_memory() {
-  while true; do
-    free -h
-    sleep 60
-  done
-}
-monitor_memory &
-MONITOR_PID=$!
-
-# Trap to kill memory monitor on script exit
-trap "kill $MONITOR_PID" EXIT
-
-ed -f - << EOF
+# Create optimized model configuration for Railway
+echo "Creating Railway-optimized model configuration..."
+ollama create ${MODEL_NAME}-railway << EOF
 FROM $MODEL_NAME
-PARAMETER num_ctx 4096
-PARAMETER num_gpu $OLLAMA_NUM_GPU
-PARAMETER num_thread $OLLAMA_NUM_THREADS
+PARAMETER num_ctx 2048
+PARAMETER num_gpu 0
+PARAMETER num_thread 1
+PARAMETER temperature 0.7
+PARAMETER top_k 40
+PARAMETER top_p 0.9
 EOF
 
-echo "Using optimized $MODEL_NAME model with expanded context window"
+echo "Railway-optimized $MODEL_NAME model created"
 
-# Start the API with increased worker threads and timeout
-exec python -m uvicorn api:app --timeout-keep-alive 75 --workers 1 --host 0.0.0.0 --port 8000 --timeout-keep-alive 75 --workers 2
+# Start the API with single worker for Railway
+exec python -m uvicorn api:app --host 0.0.0.0 --port 8000 --workers 1 --timeout-keep-alive 30

@@ -19,40 +19,10 @@ RUN for i in 1 2 3; do \
         (echo "Attempt $i failed, retrying in 10 seconds..." && sleep 10); \
     done
 
-# Download and install Ollama with multiple fallback methods
-RUN echo "Attempting to install Ollama..." && \
-    # Method 1: Try the install script with retries
-    for i in 1 2 3; do \
-        echo "Method 1 - Attempt $i: Using install script..." && \
-        curl -fsSL --connect-timeout 30 --max-time 600 \
-        --retry 3 --retry-delay 5 \
-        https://ollama.com/install.sh | sh && \
-        echo "Ollama installed successfully via script" && exit 0 || \
-        (echo "Script attempt $i failed, retrying in 30 seconds..." && sleep 30); \
-    done; \
-    # Method 2: Manual installation as fallback
-    echo "Install script failed, trying manual installation..." && \
-    OLLAMA_VERSION="0.1.32" && \
-    for i in 1 2 3; do \
-        echo "Method 2 - Attempt $i: Manual installation..." && \
-        curl -fsSL --connect-timeout 30 --max-time 600 \
-        --retry 3 --retry-delay 5 \
-        "https://github.com/ollama/ollama/releases/download/v${OLLAMA_VERSION}/ollama-linux-amd64" \
-        -o /usr/local/bin/ollama && \
-        chmod +x /usr/local/bin/ollama && \
-        echo "Ollama installed successfully via manual method" && exit 0 || \
-        (echo "Manual attempt $i failed, retrying in 30 seconds..." && sleep 30); \
-    done; \
-    # Method 3: Use wget as final fallback
-    echo "curl failed, trying wget..." && \
-    wget --timeout=600 --tries=3 --waitretry=5 \
-    "https://github.com/ollama/ollama/releases/download/v${OLLAMA_VERSION}/ollama-linux-amd64" \
-    -O /usr/local/bin/ollama && \
-    chmod +x /usr/local/bin/ollama && \
-    echo "Ollama installed successfully via wget"
-
-# Verify Ollama installation
-RUN ollama --version || echo "Ollama installation verification failed, but continuing..."
+# Install Ollama with Railway optimization
+RUN echo "Installing Ollama..." && \
+    curl -fsSL https://ollama.com/install.sh | sh && \
+    ollama --version
 
 # Copy requirements first for better caching
 COPY requirements.txt .
@@ -90,15 +60,16 @@ RUN chmod +x /app/entrypoint.sh
 # Create necessary directories
 RUN mkdir -p /app/vector_db /app/static
 
-# Set environment variables with optimized settings
+# Set environment variables with Railway optimization
 ENV OLLAMA_HOST=http://localhost:11434
 ENV DEFAULT_MODEL=tinyllama
 ENV VECTOR_DB_PATH=/app/vector_db
 ENV HTTP_TIMEOUT=30
 ENV OLLAMA_TIMEOUT=300
-ENV OLLAMA_NUM_THREADS=2
+ENV OLLAMA_NUM_THREADS=1
 ENV OLLAMA_NUM_GPU=0
-ENV OLLAMA_KEEP_ALIVE=120m
+ENV OLLAMA_KEEP_ALIVE=5m
+ENV OLLAMA_MAX_LOADED_MODELS=1
 
 # Expose ports for both Ollama and the API
 EXPOSE 8000 11434
