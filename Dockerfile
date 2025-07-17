@@ -69,7 +69,6 @@ RUN pip install --upgrade pip && \
         pip --no-cache-dir install \
         --retries 10 \
         --timeout 600 \
-        --resume-retries \
         --index-url https://pypi.org/simple/ \
         --trusted-host pypi.org \
         --trusted-host pypi.python.org \
