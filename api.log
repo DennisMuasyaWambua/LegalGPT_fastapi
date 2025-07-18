@@ -48,3 +48,6 @@
 2025-07-18 00:28:10,243 - INFO - Checking Ollama availability at http://127.0.0.1:11434 with timeout 5s
 2025-07-18 00:28:10,243 - INFO - Attempt 1/3 to check Ollama...
 2025-07-18 00:28:10,248 - INFO - Ollama connected successfully. Available models: ['llama3:latest', 'llama2:latest', 'mxbai-embed-large:latest', 'llama3.2:latest', 'codellama:latest']
+2025-07-18 00:49:35,860 - INFO - Processing query: What are the requirements for starting a business in Kenya?
+2025-07-18 00:51:20,297 - INFO - Generated response for query: What are the requirements for starting a business ...
+2025-07-18 01:09:42,444 - INFO - API shutting down

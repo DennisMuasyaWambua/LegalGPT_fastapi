@@ -6,7 +6,7 @@ export OLLAMA_NUM_THREADS=1
 export OLLAMA_KEEP_ALIVE=5m
 export OLLAMA_MAX_LOADED_MODELS=1
 export OLLAMA_NUM_GPU=0
-export OLLAMA_HOST=0.0.0.0
+export OLLAMA_HOST=0.0.0.0:11434
 
 echo "Setting OLLAMA_NUM_THREADS=1"
 echo "Setting OLLAMA_KEEP_ALIVE=5m"
@@ -68,4 +68,5 @@ EOF
 echo "Railway-optimized $MODEL_NAME model created"
 
 # Start the API with single worker for Railway
-exec python -m uvicorn api:app --host 0.0.0.0 --port 8000 --workers 1 --timeout-keep-alive 30
+PORT=${PORT:-8000}
+exec python -m uvicorn api:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 30

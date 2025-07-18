@@ -226,3 +226,20 @@
 2025-07-18 00:28:10,243 - INFO - Max concurrent requests: 4, Request delay: 1.0s
 2025-07-18 00:28:10,243 - INFO - Successfully initialized vectorizer for new.kenyalaw.org
 2025-07-18 00:28:10,243 - INFO - Completed vectorizers initialization
+2025-07-18 00:49:35,860 - INFO - Querying with text: 'What are the requirements for starting a business ...' across sites: ['kenyalaw.org']
+2025-07-18 00:49:35,873 - INFO - Querying collection for kenyalaw.org
+2025-07-18 00:49:35,877 - INFO - Found 0 results from kenyalaw.org
+2025-07-18 00:49:35,877 - INFO - Returning 0 results from query
+2025-07-18 00:49:35,877 - INFO - Getting response for query: 'What are the requirements for starting a business ...'
+2025-07-18 00:49:35,877 - INFO - Querying with text: 'What are the requirements for starting a business ...' across sites: ['kenyalaw.org']
+2025-07-18 00:49:35,884 - INFO - Querying collection for kenyalaw.org
+2025-07-18 00:49:35,885 - INFO - Found 0 results from kenyalaw.org
+2025-07-18 00:49:35,885 - INFO - Returning 0 results from query
+2025-07-18 00:49:35,885 - INFO - Sending request to Ollama at: http://localhost:11434
+2025-07-18 00:49:35,885 - INFO - Checking Ollama status (attempt 1/3)...
+2025-07-18 00:49:35,887 - INFO - Ollama status check successful
+2025-07-18 00:49:35,888 - WARNING - Model llama3 not found in Ollama. Available models: ['llama3:latest', 'llama2:latest', 'mxbai-embed-large:latest', 'llama3.2:latest', 'codellama:latest']
+2025-07-18 00:49:35,888 - INFO - Falling back to available model: llama3:latest
+2025-07-18 00:49:35,888 - INFO - Sending request to Ollama with model: llama3:latest
+2025-07-18 00:49:35,888 - INFO - Using Ollama timeout of 300 seconds
+2025-07-18 00:51:20,297 - INFO - Successfully received response from Ollama

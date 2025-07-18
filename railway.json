@@ -1,0 +1,14 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "dockerfile",
+    "dockerfilePath": "Dockerfile"
+  },
+  "deploy": {
+    "restartPolicyType": "on_failure",
+    "restartPolicyMaxRetries": 3,
+    "healthcheckPath": "/api",
+    "healthcheckTimeout": 300,
+    "startCommand": "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"
+  }
+}

@@ -1,0 +1,22 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+healthcheckPath = "/api"
+healthcheckTimeout = 300
+startCommand = "/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf"
+
+[variables]
+OLLAMA_HOST = "http://0.0.0.0:11434"
+DEFAULT_MODEL = "tinyllama"
+VECTOR_DB_PATH = "/app/vector_db"
+HTTP_TIMEOUT = "30"
+OLLAMA_TIMEOUT = "300"
+OLLAMA_NUM_THREADS = "1"
+OLLAMA_NUM_GPU = "0"
+OLLAMA_KEEP_ALIVE = "5m"
+OLLAMA_MAX_LOADED_MODELS = "1"
+PORT = "8000"

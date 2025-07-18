@@ -61,7 +61,7 @@ RUN chmod +x /app/entrypoint.sh
 RUN mkdir -p /app/vector_db /app/static
 
 # Set environment variables with Railway optimization
-ENV OLLAMA_HOST=http://localhost:11434
+ENV OLLAMA_HOST=0.0.0.0:11434
 ENV DEFAULT_MODEL=tinyllama
 ENV VECTOR_DB_PATH=/app/vector_db
 ENV HTTP_TIMEOUT=30
@@ -70,6 +70,7 @@ ENV OLLAMA_NUM_THREADS=1
 ENV OLLAMA_NUM_GPU=0
 ENV OLLAMA_KEEP_ALIVE=5m
 ENV OLLAMA_MAX_LOADED_MODELS=1
+ENV PORT=8000
 
 # Expose ports for both Ollama and the API
 EXPOSE 8000 11434

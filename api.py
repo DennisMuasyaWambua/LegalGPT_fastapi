@@ -90,7 +90,7 @@ async def startup_event():
     vector_db_path = os.environ.get("VECTOR_DB_PATH", "./vector_db")
     concurrent_requests = int(os.environ.get("CONCURRENT_REQUESTS", "4"))
     request_delay = float(os.environ.get("REQUEST_DELAY", "1.0"))
-    ollama_host = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434")
+    ollama_host = os.environ.get("OLLAMA_HOST", "http://0.0.0.0:11434")
     
     # Log Ollama configuration
     logger.info(f"Using Ollama host: {ollama_host}")
